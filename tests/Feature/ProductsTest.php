@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
@@ -62,5 +63,19 @@ class ProductsTest extends TestCase
             ]);
     }
 
+    /**
+     * @test
+     *
+     * Test: GET /api/token.
+     */
+    public function testCanAuthenticateUser()
+    {
+        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+
+        $this->post('/api/token',
+            ['email' => $user->email, 'password' => 'secret']
+        )
+            ->assertJsonStructure(['token']);
+    }
 
 }

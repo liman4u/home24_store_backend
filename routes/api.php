@@ -15,14 +15,22 @@ use Illuminate\Http\Request;
 
 $api = app('Dingo\Api\Routing\Router');
 
-$api->version('v1', function ($api) {
+$api->version('v1',[
+    'namespace' => 'App\Http\Controllers'
+], function ($api) {
 
     $api->get('/', function() {
         return [ 'Products' => 'Styled chair'];
     });
 
-    $api->get('products', 'App\Http\Controllers\ProductsController@index');
+    $api->get('products', 'ProductsController@index');
 
-    $api->get('product/{id}', 'App\Http\Controllers\ProductsController@show');
+    $api->get('product/{id}', 'ProductsController@show');
+
+    $api->post('token', 'AuthController@authenticate');
+    $api->post('logout', 'AuthController@logout');
+    $api->get('refresh', 'AuthController@getToken');
+
+
 
 });
