@@ -13,23 +13,16 @@ use Faker\Generator as Faker;
 |
 */
 
-function randDate()
-{
-    return \Carbon\Carbon::now()
-        ->subDays(rand(1, 100))
-        ->subHours(rand(1, 23))
-        ->subMinutes(rand(1, 60));
-}
 
 $factory->define(App\Models\Product::class, function (Faker $faker) {
 
 
-    $createdAt = randDate();
+    $createdAt = \Carbon\Carbon::now();
 
     return [
         'name' => $faker->text(10),
         'description' => $faker->text(20),
-        'price' => $faker->randomNumber(2),
+        'price' => $faker->randomFloat(2,0,4),
         'quantity' => $faker->randomNumber(3),
         'created_at' => $createdAt,
         'updated_at' => $createdAt,

@@ -17,7 +17,7 @@ class ProductsTransformer extends TransformerAbstract
             'id'        => (int) $product->id,
             'name'      => ucfirst($product->name),
             'description'     => $product->description,
-            'price'    => $product->price,
+            'price'    => (float) $product->price,
             'quantity' => (int) $product->quantity,
         ];
     }

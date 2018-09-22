@@ -2,13 +2,14 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class ProductsTest extends TestCase
 {
     //To allow for rollback after each test
-    use DatabaseTransactions;
+    use DatabaseMigrations;
 
     /**
      * @test
@@ -42,5 +43,24 @@ class ProductsTest extends TestCase
                 ]
             ]);
     }
+
+
+    /**
+     * @test
+     *
+     * Test: GET /api/product/1.
+     */
+    public function testCanFetchOneProduct()
+    {
+        $this->seed('ProductsTableSeeder');
+
+        $this->get('/api/product/1')
+            ->assertJsonStructure([
+                'data' => [
+                    'name','description', 'price', 'quantity'
+                ]
+            ]);
+    }
+
 
 }

@@ -23,4 +23,6 @@ $api->version('v1', function ($api) {
 
     $api->get('products', 'App\Http\Controllers\ProductsController@index');
 
+    $api->get('product/{id}', 'App\Http\Controllers\ProductsController@show');
+
 });
