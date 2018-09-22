@@ -21,4 +21,6 @@ $api->version('v1', function ($api) {
         return [ 'Products' => 'Styled chair'];
     });
 
+    $api->get('products', 'App\Http\Controllers\ProductsController@index');
+
 });
