@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Product;
+use App\Transformers\ProductsTransformer;
 
-class ProductsController extends Controller
+class ProductsController extends BaseController
 {
     /**
      * @return mixed
@@ -14,6 +14,6 @@ class ProductsController extends Controller
     {
         $products = Product::all();
 
-        return response()->json(['data' => $products->toArray()], 200);
+        return $this->response->collection( $products, new ProductsTransformer());
     }
 }
