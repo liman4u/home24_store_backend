@@ -15,7 +15,7 @@ class ProductsTest extends TestCase
      *
      * Test: GET /api.
      */
-    public function testApi()
+    public function testApiCall()
     {
         $this->get('/api')
             ->assertJson([
