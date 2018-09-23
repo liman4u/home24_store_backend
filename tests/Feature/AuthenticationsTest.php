@@ -64,6 +64,19 @@ class AuthenticationsTest extends TestCase
      *
      * Test: GET /api/token.
      */
+    public function testCanNotAuthenticateUserWithWrongPassword()
+    {
+        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+
+        $this->post('/api/token',['email' => $user->email, 'password' => 'password'])
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * @test
+     *
+     * Test: GET /api/token.
+     */
     public function testCanRegisterUser()
     {
         $user = [
