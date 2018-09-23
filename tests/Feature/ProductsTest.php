@@ -148,6 +148,29 @@ class ProductsTest extends TestCase
     }
 
 
+    /**
+     * @test
+     *
+     * Test: POST /api/products.
+     */
+    public function testCanNotCreateProductWithDuplicateName()
+    {
+
+        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+
+        $product = [
+            'name' => 'White clean sofa',
+            'description' => 'White clean sofa at the cheapest price',
+            'price' => "12.05",
+            'quantity' => 30
+        ];
+
+        $this->post('/api/products', $product, $this->headers($user))
+            ->assertStatus(Response::HTTP_CREATED);
+
+        $this->post('/api/products', $product, $this->headers($user))
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+    }
 
 
 

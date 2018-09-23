@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProductRequest;
 use App\Models\Product;
 use App\Transformers\ProductsTransformer;
+use Illuminate\Http\Request;
 
 class ProductsController extends BaseController
 {
@@ -37,11 +38,24 @@ class ProductsController extends BaseController
     }
 
     /**
-     * @param StoreProductRequest $request
+     * @param \Illuminate\Http\Request $request
      * @return \Dingo\Api\Http\Response|void
      */
-    public function store(StoreProductRequest $request)
+    public function store(Request $request)
     {
+        $validator = \Validator::make($request->input(), [
+            'name'      => 'required|unique:products',
+            'description'     => 'required',
+            'price'    => 'required',
+            'quantity' => 'required|numeric'
+        ]);
+
+        if ($validator->fails()) {
+
+            return $this->errorBadRequest($validator);
+
+        }
+
         if (Product::create($request->all())) {
 
             return $this->response->created();
