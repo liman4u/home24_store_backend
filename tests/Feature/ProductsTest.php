@@ -26,6 +26,7 @@ class ProductsTest extends TestCase
         $this->seed('ProductsTableSeeder');
 
         $this->get('/api/products')
+            ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
                     '*' => [
@@ -46,6 +47,7 @@ class ProductsTest extends TestCase
         $this->seed('ProductsTableSeeder');
 
         $this->get('/api/product/1')
+            ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
                     'name','description', 'price', 'quantity'
@@ -139,7 +141,20 @@ class ProductsTest extends TestCase
         ]);
 
         $this->delete('/api/products/' . $product->id, [], $this->headers($user))
-            ->assertStatus(204);
+            ->assertStatus(Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * @test
+     *
+     * Test: DELETE /api/products/$id.
+     */
+    public function testCanNotDeleteProductWithInvalidId()
+    {
+        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+
+
+        $this->delete('/api/products/100' , [], $this->headers($user))
+            ->assertStatus(Response::HTTP_BAD_REQUEST);
+    }
 }
