@@ -127,6 +127,32 @@ class ProductsTest extends TestCase
     /**
      * @test
      *
+     * Test: POST /api/products.
+     */
+    public function testCanUpdateProduct()
+    {
+
+        $user = factory(User::class)->create();
+
+        $product = factory(Product::class)->create();
+
+        $newProduct = factory(Product::class)->make();
+        $data = [
+            'name' => $newProduct->name ,
+            'description' => $newProduct->description ,
+            'price' => $newProduct->price ,
+            'quantity' => $newProduct->qunatity ,
+        ];
+
+        $this->put('/api/products/'.$product->id, $data, $this->headers($user))
+            ->assertStatus(Response::HTTP_OK);
+
+    }
+
+
+    /**
+     * @test
+     *
      * Test: DELETE /api/products/$id.
      */
     public function testCanDeleteProduct()

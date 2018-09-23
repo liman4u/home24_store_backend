@@ -134,5 +134,20 @@ class AuthenticationsTest extends TestCase
     }
 
 
+    /**
+     * @test
+     *
+     * Test: POST /api/logout.
+     */
+    public function testCanLogout()
+    {
+
+        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+
+
+        $this->post('/api/logout', $this->headers($user))
+            ->assertStatus(Response::HTTP_OK);
+    }
+
 
 }

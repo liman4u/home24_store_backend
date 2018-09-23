@@ -116,11 +116,9 @@ class AuthController extends BaseController
     public function logout(Request $request)
     {
 
-        $this->validate($request, [
-            'token' => 'required'
-        ]);
+        $token = JWTAuth::parseToken();
 
-        JWTAuth::invalidate($request->input('token'));
+        $token->invalidate();
 
     }
 
