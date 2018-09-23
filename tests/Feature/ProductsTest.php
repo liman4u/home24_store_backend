@@ -99,8 +99,9 @@ class ProductsTest extends TestCase
             ->assertJsonStructure([
                 'data' => [
                     'user' => ['name','email','id'],
-                    'token'
-
+                    'token',
+                    'expired_at',
+                    'refresh_expired_at'
                 ]
                ] );
     }
@@ -124,7 +125,30 @@ class ProductsTest extends TestCase
         ];
 
         $this->post('/api/products', $product, $this->headers($user))
-            ->assertStatus(201);
+            ->assertStatus(Response::HTTP_CREATED);
     }
+
+    /**
+     * @test
+     *
+     * Test: POST /api/products.
+     */
+    public function testCanNotCreateProductWithoutToken()
+    {
+
+        $product = [
+            'name' => 'White clean sofa',
+            'description' => 'White clean sofa at the cheapest price',
+            'price' => "12.05",
+            'quantity' => 30
+        ];
+
+        $this->post('/api/products', $product)
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+
+
+
 
 }
