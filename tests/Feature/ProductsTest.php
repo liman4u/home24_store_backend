@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -64,47 +65,7 @@ class ProductsTest extends TestCase
             ]);
     }
 
-    /**
-     * @test
-     *
-     * Test: GET /api/token.
-     */
-    public function testCanAuthenticateUser()
-    {
-        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
 
-        $this->post('/api/token',
-            ['email' => $user->email, 'password' => 'secret']
-        )
-            ->assertJsonStructure(['token']);
-    }
-
-    /**
-     * @test
-     *
-     * Test: GET /api/token.
-     */
-    public function testCanRegisterUser()
-    {
-        $user = [
-            'name' => 'John Doe',
-            'email' => 'john.doe@live.com',
-            'password' => 'secret',
-            'password_confirmation' => 'secret'
-
-        ];
-
-        $this->post('/api/register',$user )
-            ->assertStatus(Response::HTTP_CREATED)
-            ->assertJsonStructure([
-                'data' => [
-                    'user' => ['name','email','id'],
-                    'token',
-                    'expired_at',
-                    'refresh_expired_at'
-                ]
-               ] );
-    }
 
 
     /**
@@ -173,5 +134,24 @@ class ProductsTest extends TestCase
     }
 
 
+    /**
+     * @test
+     *
+     * Test: DELETE /api/products/$id.
+     */
+    public function testCanDeleteProduct()
+    {
+        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+
+        $product = Product::create([
+            'name' => 'White clean sofa',
+            'description' => 'White clean sofa at the cheapest price',
+            'price' => "12.05",
+            'quantity' => 30
+        ]);
+
+        $this->delete('/api/products/' . $product->id, [], $this->headers($user))
+            ->assertStatus(204);
+    }
 
 }

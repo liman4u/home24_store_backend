@@ -22,13 +22,20 @@ class AuthController extends BaseController
      */
     public function authenticate(Request $request)
     {
-        // grab credentials from the request
-        $credentials = $request->only('email', 'password');
+
+        $validator = \Validator::make($request->input(), [
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->errorBadRequest($validator);
+        }
 
         try {
 
             // attempt to verify the credentials and create a token for the user
-            if (!$token = JWTAuth::attempt($credentials)) {
+            if (!$token = JWTAuth::attempt($this->getCredentials($request))) {
 
                 return response()->json(['error' => 'invalid_credentials'], 401);
 
@@ -252,6 +259,7 @@ class AuthController extends BaseController
      */
     protected function getCredentials(Request $request)
     {
+        // grab credentials from the request
         return $request->only('email', 'password');
     }
 }

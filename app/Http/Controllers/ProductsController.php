@@ -38,6 +38,8 @@ class ProductsController extends BaseController
     }
 
     /**
+     * Create a product
+     *
      * @param \Illuminate\Http\Request $request
      * @return \Dingo\Api\Http\Response|void
      */
@@ -59,6 +61,28 @@ class ProductsController extends BaseController
         if (Product::create($request->all())) {
 
             return $this->response->created();
+
+        }
+
+        return $this->response->errorBadRequest();
+    }
+
+    /**
+     * Remove the specified product.
+     *
+     * @param  int $id
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $product = Product::find($id);
+
+        if ($product) {
+
+            $product->delete();
+
+            return $this->response->noContent();
 
         }
 
