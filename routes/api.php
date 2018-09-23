@@ -30,7 +30,20 @@ $api->version('v1',[
     $api->post('token', 'AuthController@authenticate');
     $api->post('logout', 'AuthController@logout');
     $api->get('refresh', 'AuthController@getToken');
+    $api->post('register', 'AuthController@register');
 
 
+    $api->group([
+        'middleware' => 'api.auth',
+    ], function ($api) {
+
+        $api->get('account', 'AuthController@authenticatedUser');
+
+        $api->post('products', 'ProductsController@store');
+
+        $api->delete('products/{id}', 'ProductsController@destroy');
+
+    });
 
 });
+

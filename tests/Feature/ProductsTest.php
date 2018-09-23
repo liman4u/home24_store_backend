@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\Response;
 use Tests\TestCase;
 
 class ProductsTest extends TestCase
@@ -76,6 +77,54 @@ class ProductsTest extends TestCase
             ['email' => $user->email, 'password' => 'secret']
         )
             ->assertJsonStructure(['token']);
+    }
+
+    /**
+     * @test
+     *
+     * Test: GET /api/token.
+     */
+    public function testCanRegisterUser()
+    {
+        $user = [
+            'name' => 'John Doe',
+            'email' => 'john.doe@live.com',
+            'password' => 'secret',
+            'password_confirmation' => 'secret'
+
+        ];
+
+        $this->post('/api/register',$user )
+            ->assertStatus(Response::HTTP_CREATED)
+            ->assertJsonStructure([
+                'data' => [
+                    'user' => ['name','email','id'],
+                    'token'
+
+                ]
+               ] );
+    }
+
+
+    /**
+     * @test
+     *
+     * Test: POST /api/products.
+     */
+    public function testCanCreateProduct()
+    {
+
+        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+
+        $product = [
+            'name' => 'White clean sofa',
+            'description' => 'White clean sofa at the cheapest price',
+            'price' => "12.05",
+            'quantity' => 30
+        ];
+
+        $this->post('/api/products', $product, $this->headers($user))
+            ->assertStatus(201);
     }
 
 }
