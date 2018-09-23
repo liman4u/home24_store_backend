@@ -23,7 +23,7 @@ class AuthenticationsTest extends TestCase
     /**
      * @test
      *
-     * Test: GET /api/token.
+     * Test: POST /api/token.
      */
     public function testCanAuthenticateUser()
     {
@@ -38,7 +38,7 @@ class AuthenticationsTest extends TestCase
     /**
      * @test
      *
-     * Test: GET /api/token.
+     * Test: POST /api/token.
      */
     public function testCanNotAuthenticateUserWithEmptyData()
     {
@@ -50,7 +50,7 @@ class AuthenticationsTest extends TestCase
     /**
      * @test
      *
-     * Test: GET /api/token.
+     * Test: POST /api/token.
      */
     public function testCanNotAuthenticateUserWithInvalidData()
     {
@@ -62,7 +62,7 @@ class AuthenticationsTest extends TestCase
     /**
      * @test
      *
-     * Test: GET /api/token.
+     * Test: POST /api/token.
      */
     public function testCanNotAuthenticateUserWithWrongPassword()
     {
@@ -75,7 +75,7 @@ class AuthenticationsTest extends TestCase
     /**
      * @test
      *
-     * Test: GET /api/token.
+     * Test: POST /api/register.
      */
     public function testCanRegisterUser()
     {
@@ -91,12 +91,26 @@ class AuthenticationsTest extends TestCase
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJsonStructure([
                 'data' => [
-                    'user' => ['name','email','id'],
+                    'user' => ['id','name','email'],
                     'token',
                     'expired_at',
                     'refresh_expired_at'
                 ]
             ] );
+    }
+
+    /**
+     * @test
+     *
+     * Test: POST /api/register.
+     */
+    public function testCanNotRegisterUserWithEmptyData()
+    {
+        $user = [];
+
+        $this->post('/api/register',$user )
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
     }
 
 

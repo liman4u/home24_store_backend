@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Transformers\UsersTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -126,7 +127,7 @@ class AuthController extends BaseController
     /**
      * Returns the authenticated user
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Dingo\Api\Http\Response|void
      */
     public function authenticatedUser()
     {
@@ -135,26 +136,30 @@ class AuthController extends BaseController
 
             if (!$user = JWTAuth::parseToken()->authenticate()) {
 
-                return response()->json(['user_not_found'], 404);
+                return $this->response->error("User Not Found",Response::HTTP_NOT_FOUND);
 
             }
 
         } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
 
-            return response()->json(['token_expired'], $e->getStatusCode());
+
+            return $this->response->error("Token Expired",$e->getStatusCode());
 
         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
 
-            return response()->json(['token_invalid'], $e->getStatusCode());
+
+            return $this->response->error("Token Invalid",$e->getStatusCode());
 
         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
 
-            return response()->json(['token_absent'], $e->getStatusCode());
+
+            return $this->response->error("Token Absent",$e->getStatusCode());
 
         }
 
         // the token is valid and we have found the user via the sub claim
-        return response()->json(compact('user'));
+
+        return $this->response->item($this->user, new UsersTransformer());
     }
 
 
@@ -163,7 +168,7 @@ class AuthController extends BaseController
      *
      * @return mixed
      */
-    public function getToken()
+    public function refreshToken()
     {
 
         $token = JWTAuth::getToken();

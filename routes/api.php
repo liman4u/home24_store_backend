@@ -29,7 +29,7 @@ $api->version('v1',[
 
     $api->post('token', 'AuthController@authenticate');
     $api->post('logout', 'AuthController@logout');
-    $api->get('refresh', 'AuthController@getToken');
+    $api->get('refresh', 'AuthController@refreshToken');
     $api->post('register', 'AuthController@register');
 
 
