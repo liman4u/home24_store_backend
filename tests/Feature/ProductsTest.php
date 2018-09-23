@@ -14,18 +14,6 @@ class ProductsTest extends TestCase
     //To allow for rollback after each test
     use DatabaseMigrations;
 
-    /**
-     * @test
-     *
-     * Test: GET /api.
-     */
-    public function testApiCall()
-    {
-        $this->get('/api')
-            ->assertJson([
-                'Products' => 'Styled chair'
-            ]);
-    }
 
 
     /**

@@ -113,6 +113,26 @@ class AuthenticationsTest extends TestCase
 
     }
 
+    /**
+     * @test
+     *
+     * Test: POST /api/register.
+     */
+    public function testCanNotRegisterUserWithInvalidData()
+    {
+        $user = [
+            'name' => 'John Doe',
+            'email' => 'john.doe',
+            'password' => 'secret',
+            'password_confirmation' => 'secret'
+
+        ];
+
+        $this->post('/api/register',$user )
+            ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+
+    }
+
 
 
 }

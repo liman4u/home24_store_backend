@@ -181,7 +181,10 @@ return [
         Dingo\Api\Provider\LaravelServiceProvider::class,
 
         //JWT
-        Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class
+        Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+
+        //Api Doc
+        Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class,
 
     ],
 

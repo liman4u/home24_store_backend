@@ -19,9 +19,6 @@ $api->version('v1',[
     'namespace' => 'App\Http\Controllers'
 ], function ($api) {
 
-    $api->get('/', function() {
-        return [ 'Products' => 'Styled chair'];
-    });
 
     $api->get('products', 'ProductsController@index');
 
