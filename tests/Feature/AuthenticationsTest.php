@@ -34,7 +34,13 @@ class AuthenticationsTest extends TestCase
         $this->post('/api/token',
             ['email' => $user->email, 'password' => $password]
         )
-            ->assertJsonStructure(['token']);
+            ->assertJsonStructure([
+                'data' => [
+                    'token',
+                    'expired_at',
+                    'refresh_expired_at'
+                ]
+            ] );
     }
 
     /**

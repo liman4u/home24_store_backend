@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\ResponseTrait;
 use App\Models\User;
 use App\Transformers\UsersTransformer;
 use Carbon\Carbon;
@@ -14,6 +15,7 @@ use Illuminate\Http\Response;
 
 class AuthController extends BaseController
 {
+    use ResponseTrait;
 
     /**
      *  API Login, on success return JWT Auth token
@@ -39,19 +41,28 @@ class AuthController extends BaseController
             // attempt to verify the credentials and create a token for the user
             if (!$token = JWTAuth::attempt($this->getCredentials($request))) {
 
-                return response()->json(['error' => 'invalid_credentials'], 401);
+                return $this->failureResponse("Invalid Credentials",Response::HTTP_UNAUTHORIZED);
 
             }
 
         } catch (JWTException $e) {
 
             // something went wrong whilst attempting to encode the token
-            return response()->json(['error' => 'could_not_create_token'], 500);
+
+            return $this->failureResponse("Could Not Create Token");
 
         }
 
+        $data =  [
+                'token' => $token,
+                'expired_at' => Carbon::now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
+                'refresh_expired_at' => Carbon::now()->addMinutes(config('jwt.refresh_ttl'))->toDateTimeString()
+
+        ];
+
         // all good so return the token
-        return response()->json(compact('token'));
+        return $this->successResponse($data,'Authenticated');
+
     }
 
 
@@ -119,13 +130,15 @@ class AuthController extends BaseController
 
         try{
 
+            // get token from header
             $token = JWTAuth::getToken();
 
+            //invalidate token
             JWTAuth::invalidate($token);
 
-        }catch (JWTException $ex){
+            return $this->successResponse(null,'Logout Successful');
 
-            \Log::error($ex->getMessage());
+        }catch (JWTException $ex){
 
             return $this->onJwtGenerationError();
         }
@@ -136,7 +149,7 @@ class AuthController extends BaseController
     /**
      * Returns the authenticated user
      *
-     * @return \Dingo\Api\Http\Response|void
+     * @return \Dingo\Api\Http\Response
      */
     public function authenticatedUser()
     {
@@ -145,24 +158,21 @@ class AuthController extends BaseController
 
             if (!$user = JWTAuth::parseToken()->authenticate()) {
 
-                return $this->response->error("User Not Found",Response::HTTP_NOT_FOUND);
+                return $this->failureResponse('User Not Found',Response::HTTP_NOT_FOUND);
 
             }
 
         } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
 
-
-            return $this->response->error("Token Expired",$e->getStatusCode());
+            return $this->failureResponse('Token Expired',$e->getStatusCode());
 
         } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
 
-
-            return $this->response->error("Token Invalid",$e->getStatusCode());
+            return $this->failureResponse('Token Invalid',$e->getStatusCode());
 
         } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
 
-
-            return $this->response->error("Token Absent",$e->getStatusCode());
+            return $this->failureResponse('Token Absent',$e->getStatusCode());
 
         }
 
@@ -184,7 +194,7 @@ class AuthController extends BaseController
 
         if (!$token) {
 
-            return $this->response->errorMethodNotAllowed('Token not provided');
+            return $this->failureResponse('Token Not Provided',Response::HTTP_METHOD_NOT_ALLOWED);
 
         }
 
@@ -194,73 +204,78 @@ class AuthController extends BaseController
 
         } catch (JWTException $e) {
 
-            return $this->response->errorInternal('Not able to refresh Token');
-
+            return $this->failureResponse('Not Able To Refresh Token');
         }
 
+        $data =  [
+                'token' => $refreshedToken,
+                'expired_at' => Carbon::now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
+                'refresh_expired_at' => Carbon::now()->addMinutes(config('jwt.refresh_ttl'))->toDateTimeString()
 
-        return $this->response->withArray(['token' => $refreshedToken]);
+        ];
+
+        // all good so return the refreshed token
+        return $this->successResponse($data,'Token Refreshed');
+
     }
 
     /**
-     * What response should be returned on authorized.
+     * Response should be returned on authorized.
      *
      * @return JsonResponse
      */
     protected function onRegistered($token,User $user)
     {
-        return new JsonResponse([
-            'success' => true,
-            'message' => 'User Registered',
-            'data' => [
+        $data = [
                 'user' => $user,
                 'token' => $token,
                 'expired_at' => Carbon::now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
                 'refresh_expired_at' => Carbon::now()->addMinutes(config('jwt.refresh_ttl'))->toDateTimeString(),
-            ]
-        ],Response::HTTP_CREATED);
+
+        ];
+
+        return $this->successResponse($data,'User Registered',Response::HTTP_CREATED);
     }
 
     /**
-     * What response should be returned on authorized.
+     * Response should be returned on authorized.
      *
      * @return JsonResponse
      */
     protected function onAuthorized($token)
     {
-        return new JsonResponse([
-            'success' => true,
-            'message' => 'Token Generated',
-            'data' => [
-                'token' => $token,
-                'expired_at' => Carbon::now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
-                'refresh_expired_at' => Carbon::now()->addMinutes(config('jwt.refresh_ttl'))->toDateTimeString(),
-            ]
-        ]);
+
+
+        $data = [
+            'token' => $token,
+            'expired_at' => Carbon::now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
+            'refresh_expired_at' => Carbon::now()->addMinutes(config('jwt.refresh_ttl'))->toDateTimeString(),
+
+        ];
+
+        return $this->successResponse($data,'Token Generated');
     }
 
     /**
-     * What response should be returned on error while generate JWT.
+     * Response should be returned on error while generate JWT.
      *
      * @return JsonResponse
      */
     protected function onJwtGenerationError()
     {
-        return new JsonResponse([
-            'message' => 'could_not_create_token'
-        ], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        return $this->failureResponse('Could Not Create Token');
     }
 
     /**
-     * What response should be returned on invalid credentials.
+     * Response should be returned on invalid credentials.
      *
      * @return JsonResponse
      */
     protected function onUnauthorized()
     {
-        return new JsonResponse([
-            'message' => 'invalid_credentials'
-        ], Response::HTTP_UNAUTHORIZED);
+
+        return $this->failureResponse('Inavlid Credentials',Response::HTTP_UNAUTHORIZED);
     }
 
 
