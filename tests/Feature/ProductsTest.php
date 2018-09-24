@@ -66,13 +66,13 @@ class ProductsTest extends TestCase
     public function testCanCreateProduct()
     {
 
-        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+        $user = factory(User::class)->create();
 
         $product = [
-            'name' => 'White clean sofa',
-            'description' => 'White clean sofa at the cheapest price',
-            'price' => 12.05,
-            'quantity' => 30
+            'name' => $this->faker->text(10),
+            'description' => $this->faker->text(20),
+            'price' => $this->faker->randomFloat(2,0,4),
+            'quantity' => $this->faker->randomNumber(3)
         ];
 
         $this->post('/api/products', $product, $this->headers($user))
@@ -88,10 +88,10 @@ class ProductsTest extends TestCase
     {
 
         $product = [
-            'name' => 'White clean sofa',
-            'description' => 'White clean sofa at the cheapest price',
-            'price' => 12.05,
-            'quantity' => 30
+            'name' => $this->faker->text(10),
+            'description' => $this->faker->text(20),
+            'price' => $this->faker->randomFloat(2,0,4),
+            'quantity' => $this->faker->randomNumber(3)
         ];
 
         $this->post('/api/products', $product)
@@ -107,13 +107,13 @@ class ProductsTest extends TestCase
     public function testCanNotCreateProductWithDuplicateName()
     {
 
-        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+        $user = factory(User::class)->create();
 
         $product = [
-            'name' => 'White clean sofa',
-            'description' => 'White clean sofa at the cheapest price',
-            'price' => 12.05,
-            'quantity' => 30
+            'name' => $this->faker->text(10),
+            'description' => $this->faker->text(20),
+            'price' => $this->faker->randomFloat(2,0,4),
+            'quantity' => $this->faker->randomNumber(3)
         ];
 
         $this->post('/api/products', $product, $this->headers($user))
@@ -137,10 +137,10 @@ class ProductsTest extends TestCase
         $product = factory(Product::class)->create();
 
         $data = [
-            'name' => 'White clean sofa',
-            'description' => 'White clean sofa at the cheapest price',
-            'price' => 12.05,
-            'quantity' => 30
+            'name' => $this->faker->text(10),
+            'description' => $this->faker->text(20),
+            'price' => $this->faker->randomFloat(2,0,4),
+            'quantity' => $this->faker->randomNumber(3)
         ];
 
         $this->put('/api/products/'.$product->id, $data, $this->headers($user))
@@ -159,10 +159,10 @@ class ProductsTest extends TestCase
         $product = factory(Product::class)->create();
 
         $data = [
-            'name' => 'White clean sofa',
-            'description' => 'White clean sofa at the cheapest price',
-            'price' => 12.05,
-            'quantity' => 30
+            'name' => $this->faker->text(10),
+            'description' => $this->faker->text(20),
+            'price' => $this->faker->randomFloat(2,0,4),
+            'quantity' => $this->faker->randomNumber(3)
         ];
 
         $this->put('/api/products/'.$product->id, $data)
@@ -178,13 +178,13 @@ class ProductsTest extends TestCase
      */
     public function testCanDeleteProduct()
     {
-        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+        $user = factory(User::class)->create();
 
-        $product = Product::create([
-            'name' => 'White clean sofa',
-            'description' => 'White clean sofa at the cheapest price',
-            'price' => 12.05,
-            'quantity' => 30
+        $product = Product::create($product = [
+            'name' => $this->faker->text(10),
+            'description' => $this->faker->text(20),
+            'price' => $this->faker->randomFloat(2,0,4),
+            'quantity' => $this->faker->randomNumber(3)
         ]);
 
         $this->delete('/api/products/' . $product->id, [], $this->headers($user))
@@ -198,7 +198,7 @@ class ProductsTest extends TestCase
      */
     public function testCanNotDeleteProductWithInvalidId()
     {
-        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+        $user = factory(User::class)->create();
 
 
         $this->delete('/api/products/100' , [], $this->headers($user))

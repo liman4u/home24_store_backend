@@ -27,10 +27,12 @@ class AuthenticationsTest extends TestCase
      */
     public function testCanAuthenticateUser()
     {
-        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+        $password = str_random(5);
+
+        $user = factory(User::class)->create(['password' => bcrypt($password)]);
 
         $this->post('/api/token',
-            ['email' => $user->email, 'password' => 'secret']
+            ['email' => $user->email, 'password' => $password]
         )
             ->assertJsonStructure(['token']);
     }
@@ -54,8 +56,9 @@ class AuthenticationsTest extends TestCase
      */
     public function testCanNotAuthenticateUserWithInvalidData()
     {
+        $password = str_random(5);
 
-        $this->post('/api/token',['email' => 'john.doe@live.com', 'password' => 'secret'])
+        $this->post('/api/token',['email' => $this->faker->unique()->safeEmail, 'password' => $password])
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
@@ -66,7 +69,7 @@ class AuthenticationsTest extends TestCase
      */
     public function testCanNotAuthenticateUserWithWrongPassword()
     {
-        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+        $user = factory(User::class)->create();
 
         $this->post('/api/token',['email' => $user->email, 'password' => 'password'])
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
@@ -79,11 +82,13 @@ class AuthenticationsTest extends TestCase
      */
     public function testCanRegisterUser()
     {
+        $password = str_random(5);
+
         $user = [
-            'name' => 'John Doe',
-            'email' => 'john.doe@live.com',
-            'password' => 'secret',
-            'password_confirmation' => 'secret'
+            'name' => $this->faker->name,
+            'email' => $this->faker->unique()->safeEmail,
+            'password' => $password,
+            'password_confirmation' => $password
 
         ];
 
@@ -120,11 +125,13 @@ class AuthenticationsTest extends TestCase
      */
     public function testCanNotRegisterUserWithInvalidData()
     {
+        $password = str_random(5);
+
         $user = [
             'name' => $this->faker->name,
             'email' => 'john.doe',
-            'password' => 'secret',
-            'password_confirmation' => 'secret'
+            'password' => $password,
+            'password_confirmation' => $password
 
         ];
 
@@ -143,7 +150,7 @@ class AuthenticationsTest extends TestCase
     public function testCanLogout()
     {
 
-        $user = factory(User::class)->create(['password' => bcrypt('secret')]);
+        $user = factory(User::class)->create();
 
 
         $this->post('/api/logout',[], $this->headers($user))
