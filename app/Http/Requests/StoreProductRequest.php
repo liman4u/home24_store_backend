@@ -26,7 +26,7 @@ class StoreProductRequest extends FormRequest
         return [
             'name'      => 'required|unique:products',
             'description'     => 'required',
-            'price'    => 'required',
+            'price'    => 'required|regex:/^\d*(\.\d{2})?$/',
             'quantity' => 'required|numeric'
         ];
     }

@@ -38,6 +38,8 @@ $api->version('v1',[
 
         $api->post('products', 'ProductsController@store');
 
+        $api->put('products/{id}', 'ProductsController@update');
+
         $api->delete('products/{id}', 'ProductsController@destroy');
 
     });

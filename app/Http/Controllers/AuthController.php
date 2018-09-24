@@ -7,6 +7,7 @@ use App\Transformers\UsersTransformer;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Mockery\Exception;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Response;
@@ -111,14 +112,24 @@ class AuthController extends BaseController
      * Invalidate the token, so user cannot use it anymore
      * They have to relogin to get a new token
      *
-     * @param Request $request
      */
-    public function logout(Request $request)
+    public function logout()
     {
+        //dd(JWTAuth::getToken());
 
-        $token = JWTAuth::parseToken();
+        try{
 
-        $token->invalidate();
+            $token = JWTAuth::getToken();
+
+            JWTAuth::invalidate($token);
+
+        }catch (JWTException $ex){
+
+            \Log::error($ex->getMessage());
+
+            return $this->onJwtGenerationError();
+        }
+
 
     }
 

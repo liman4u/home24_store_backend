@@ -71,7 +71,7 @@ class ProductsTest extends TestCase
         $product = [
             'name' => 'White clean sofa',
             'description' => 'White clean sofa at the cheapest price',
-            'price' => "12.05",
+            'price' => 12.05,
             'quantity' => 30
         ];
 
@@ -90,7 +90,7 @@ class ProductsTest extends TestCase
         $product = [
             'name' => 'White clean sofa',
             'description' => 'White clean sofa at the cheapest price',
-            'price' => "12.05",
+            'price' => 12.05,
             'quantity' => 30
         ];
 
@@ -112,7 +112,7 @@ class ProductsTest extends TestCase
         $product = [
             'name' => 'White clean sofa',
             'description' => 'White clean sofa at the cheapest price',
-            'price' => "12.05",
+            'price' => 12.05,
             'quantity' => 30
         ];
 
@@ -136,16 +136,37 @@ class ProductsTest extends TestCase
 
         $product = factory(Product::class)->create();
 
-        $newProduct = factory(Product::class)->make();
         $data = [
-            'name' => $newProduct->name ,
-            'description' => $newProduct->description ,
-            'price' => $newProduct->price ,
-            'quantity' => $newProduct->qunatity ,
+            'name' => 'White clean sofa',
+            'description' => 'White clean sofa at the cheapest price',
+            'price' => 12.05,
+            'quantity' => 30
         ];
 
         $this->put('/api/products/'.$product->id, $data, $this->headers($user))
             ->assertStatus(Response::HTTP_OK);
+
+    }
+
+    /**
+     * @test
+     *
+     * Test: POST /api/products.
+     */
+    public function testCanNotUpdateProductWithoutToken()
+    {
+
+        $product = factory(Product::class)->create();
+
+        $data = [
+            'name' => 'White clean sofa',
+            'description' => 'White clean sofa at the cheapest price',
+            'price' => 12.05,
+            'quantity' => 30
+        ];
+
+        $this->put('/api/products/'.$product->id, $data)
+            ->assertStatus(Response::HTTP_UNAUTHORIZED);
 
     }
 
@@ -162,7 +183,7 @@ class ProductsTest extends TestCase
         $product = Product::create([
             'name' => 'White clean sofa',
             'description' => 'White clean sofa at the cheapest price',
-            'price' => "12.05",
+            'price' => 12.05,
             'quantity' => 30
         ]);
 

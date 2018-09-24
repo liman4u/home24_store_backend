@@ -121,12 +121,13 @@ class AuthenticationsTest extends TestCase
     public function testCanNotRegisterUserWithInvalidData()
     {
         $user = [
-            'name' => 'John Doe',
+            'name' => $this->faker->name,
             'email' => 'john.doe',
             'password' => 'secret',
             'password_confirmation' => 'secret'
 
         ];
+
 
         $this->post('/api/register',$user )
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -145,7 +146,7 @@ class AuthenticationsTest extends TestCase
         $user = factory(User::class)->create(['password' => bcrypt('secret')]);
 
 
-        $this->post('/api/logout', $this->headers($user))
+        $this->post('/api/logout',[], $this->headers($user))
             ->assertStatus(Response::HTTP_OK);
     }
 

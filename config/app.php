@@ -186,6 +186,9 @@ return [
         //Api Doc
         Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class,
 
+        //COR
+        Barryvdh\Cors\ServiceProvider::class,
+
     ],
 
     /*

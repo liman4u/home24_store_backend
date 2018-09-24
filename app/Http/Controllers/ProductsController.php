@@ -48,7 +48,7 @@ class ProductsController extends BaseController
         $validator = \Validator::make($request->input(), [
             'name'      => 'required|unique:products',
             'description'     => 'required',
-            'price'    => 'required',
+            'price'    => 'required|regex:/^\d*(\.\d{2})?$/',
             'quantity' => 'required|numeric'
         ]);
 
@@ -65,6 +65,37 @@ class ProductsController extends BaseController
         }
 
         return $this->response->errorBadRequest();
+    }
+
+    /**
+     * Update a product
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Dingo\Api\Http\Response|void
+     */
+    public function update($id,Request $request)
+    {
+
+        $validator = \Validator::make($request->input(), [
+            'name'      => 'required|unique:products',
+            'description'     => 'required',
+            'price'    => 'required|regex:/^\d*(\.\d{2})?$/',
+            'quantity' => 'required|numeric'
+        ]);
+
+        if ($validator->fails()) {
+
+
+            return $this->errorBadRequest($validator);
+
+        }
+
+        $product = Product::find($id);
+
+        $product->fill($request->all());
+
+        return $this->response->item($product,new ProductsTransformer());
+
     }
 
     /**
