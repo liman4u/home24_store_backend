@@ -82,9 +82,18 @@ trait ResponseTrait
      * @param Model $item
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithItem($item,$statusCode = Response::HTTP_CREATED)
+    protected function respondWithItem($item,$message,$statusCode = Response::HTTP_CREATED)
     {
-        return response()->json($item['data'], $statusCode);
+        $response = [
+            'success' => true,
+            'message' => $message,
+            'status_code' => $statusCode,
+            'data'  => $item['data']
+            ,
+
+        ];
+
+        return response()->json($response, $statusCode);
     }
     /**
      * Return a json response from the application
@@ -93,9 +102,18 @@ trait ResponseTrait
      * @param array $headers
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function respondWithArray(array $array)
+    protected function respondWithArray(array $array,$message)
     {
-        return response()->json($array['data'], $this->statusCode);
+        $response = [
+            'success' => true,
+            'message' => $message,
+            'status_code' => $this->statusCode,
+            'data'  => $array['data']
+            ,
+
+        ];
+
+        return response()->json($response, $this->statusCode);
     }
 
 

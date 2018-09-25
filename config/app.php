@@ -189,6 +189,9 @@ return [
         //COR
         Barryvdh\Cors\ServiceProvider::class,
 
+        //L5 Repository
+        Prettus\Repository\Providers\RepositoryServiceProvider::class,
+
     ],
 
     /*

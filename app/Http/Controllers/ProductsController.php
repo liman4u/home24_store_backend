@@ -3,22 +3,40 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Traits\ResponseTrait;
 use App\Models\Product;
+use App\Repositories\ProductRepository;
 use App\Transformers\ProductsTransformer;
+use Dingo\Api\Http\Response;
 use Illuminate\Http\Request;
 
 class ProductsController extends BaseController
 {
-    /**
-     * Get all products
-     *
-     * @return mixed
-     */
-    public function index()
-    {
-        $products = Product::all();
+    use ResponseTrait;
 
-        return $this->response->collection( $products, new ProductsTransformer());
+    /**
+     * @var ProductRepository
+     */
+    protected $repository;
+
+    /**
+     * ProductsController constructor.
+     * @param ProductRepository $repository
+     */
+    public function __construct(ProductRepository $repository){
+        $this->repository = $repository;
+    }
+
+
+    /**
+     * Display a listing of products
+     *
+     * @return Response
+     */
+    public function index(Request $request)
+    {
+        return $this->respondWithArray($this->repository->paginate($request->input('limit')),'Products Listed');
+
     }
 
     /**
@@ -34,7 +52,8 @@ class ProductsController extends BaseController
             return $this->item($product, new ProductsTransformer());
         }
 
-        return $this->response->errorNotFound();
+        return $this->failureResponse('Product Not Found',Response::HTTP_NOT_FOUND);
+
     }
 
     /**
@@ -59,6 +78,7 @@ class ProductsController extends BaseController
         }
 
         if (Product::create($request->all())) {
+
 
             return $this->response->created();
 
