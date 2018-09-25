@@ -12,6 +12,7 @@ namespace App\Http\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Dingo\Api\Exception\ValidationHttpException;
 
 /**
  * Trait ResponseTrait
@@ -40,9 +41,8 @@ trait ResponseTrait
             $response = [
                 'success' => true,
                 'message' => $message,
-                'status_code' => $statusCode,
-                'data'  => $data
-                ,
+                'data'  => $data,
+                'status_code' => $statusCode
 
             ];
         }else{
@@ -87,9 +87,8 @@ trait ResponseTrait
         $response = [
             'success' => true,
             'message' => $message,
-            'status_code' => $statusCode,
-            'data'  => $item['data']
-            ,
+            'data'  => $item['data'],
+            'status_code' => $statusCode
 
         ];
 
@@ -107,9 +106,9 @@ trait ResponseTrait
         $response = [
             'success' => true,
             'message' => $message,
-            'status_code' => $this->statusCode,
-            'data'  => $array['data']
-            ,
+            'data'  => $array['data'],
+            'status_code' => $this->statusCode
+
 
         ];
 
@@ -120,11 +119,25 @@ trait ResponseTrait
     /**
      * Return json response with validation errors
      *
-     * @param Request $request
-     * @param array $errors
-     * @return array
+     * @param $validator
      */
-    protected function buildFailedValidationResponse(Request $request, array $errors) {
-        return response()->json(['errors'=> $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
+    protected function respondWithErrors($validator)
+    {
+        // github like error messages
+        $result = [];
+        $messages = $validator->errors()->toArray();
+
+        if ($messages) {
+            foreach ($messages as $field => $errors) {
+                foreach ($errors as $error) {
+                    $result[] = [
+                        'field' => $field,
+                        'code' => $error,
+                    ];
+                }
+            }
+        }
+
+        throw new ValidationHttpException($result);
     }
 }

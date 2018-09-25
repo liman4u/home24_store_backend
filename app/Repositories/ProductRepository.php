@@ -24,6 +24,15 @@ class ProductRepository extends BaseRepository
         return Product::class;
     }
 
+    /**
+     * @var array
+     */
+    protected $fieldSearchable = [
+        'name' => 'like',
+        'price'
+    ];
+
+
 
     /**
      * @return string
@@ -31,6 +40,15 @@ class ProductRepository extends BaseRepository
     public function presenter()
     {
         return "App\\Presenters\\ProductPresenter";
+    }
+
+    /**
+     * Inject Request Criteria for searches and filters
+     */
+    public function boot(){
+
+        $this->pushCriteria(app('Prettus\Repository\Criteria\RequestCriteria'));
+
     }
 
 

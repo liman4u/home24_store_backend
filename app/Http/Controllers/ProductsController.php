@@ -2,17 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreProductRequest;
+use App\Exceptions\ProductNotFoundException;
 use App\Http\Traits\ResponseTrait;
-use App\Models\Product;
 use App\Repositories\ProductRepository;
-use App\Transformers\ProductsTransformer;
+use App\Validators\ProductValidator;
 use Dingo\Api\Http\Response;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
+/**
+ * Class ProductsController
+ * @package App\Http\Controllers
+ */
 class ProductsController extends BaseController
 {
     use ResponseTrait;
+
+
 
     /**
      * @var ProductRepository
@@ -46,13 +52,23 @@ class ProductsController extends BaseController
      */
     public function show($id)
     {
-        $product = Product::where('id', $id)->first();
+        try{
 
-        if ($product) {
-            return $this->item($product, new ProductsTransformer());
+            $product = $this->repository->find($id);
+
+            return $this->respondWithItem($product,'Product Listed');
+
+        }catch (ProductNotFoundException $exception){
+
+            return $this->failureResponse($exception->getMessage(),Response::HTTP_NOT_FOUND);
+
+        }catch (ModelNotFoundException $exception){
+
+            return $this->failureResponse('Product Not Found',Response::HTTP_NOT_FOUND);
         }
 
-        return $this->failureResponse('Product Not Found',Response::HTTP_NOT_FOUND);
+
+
 
     }
 
@@ -62,29 +78,20 @@ class ProductsController extends BaseController
      * @param \Illuminate\Http\Request $request
      * @return \Dingo\Api\Http\Response|void
      */
-    public function store(Request $request)
+    public function store(ProductValidator $validator,Request $request)
     {
-        $validator = \Validator::make($request->input(), [
-            'name'      => 'required|unique:products',
-            'description'     => 'required',
-            'price'    => 'required|regex:/^\d*(\.\d{2})?$/',
-            'quantity' => 'required|numeric'
-        ]);
+
+        $validator = \Validator::make($request->input(), $validator->getRules());
 
         if ($validator->fails()) {
 
-            return $this->errorBadRequest($validator);
+
+            return $this->respondWithErrors($validator);
 
         }
 
-        if (Product::create($request->all())) {
+        return $this->respondWithItem($this->repository->store($request->all()),'Product Created',Response::HTTP_CREATED);
 
-
-            return $this->response->created();
-
-        }
-
-        return $this->response->errorBadRequest();
     }
 
     /**
@@ -93,28 +100,30 @@ class ProductsController extends BaseController
      * @param \Illuminate\Http\Request $request
      * @return \Dingo\Api\Http\Response|void
      */
-    public function update($id,Request $request)
+    public function update($id,ProductValidator $validator,Request $request)
     {
 
-        $validator = \Validator::make($request->input(), [
-            'name'      => 'required|unique:products',
-            'description'     => 'required',
-            'price'    => 'required|regex:/^\d*(\.\d{2})?$/',
-            'quantity' => 'required|numeric'
-        ]);
+        $validator = \Validator::make($request->input(), $validator->getRules());
 
         if ($validator->fails()) {
 
 
-            return $this->errorBadRequest($validator);
+            return $this->respondWithErrors($validator);
 
         }
 
-        $product = Product::find($id);
+        try{
 
-        $product->fill($request->all());
+            $product = $this->repository->update($request->all(),$id);
 
-        return $this->response->item($product,new ProductsTransformer());
+
+            return $this->respondWithItem($product,'Product Updated',Response::HTTP_OK);
+
+        }catch (ModelNotFoundException $exception){
+
+            return $this->failureResponse('Product Not Found',Response::HTTP_NOT_FOUND);
+        }
+
 
     }
 
@@ -127,16 +136,14 @@ class ProductsController extends BaseController
      */
     public function destroy($id)
     {
-        $product = Product::find($id);
 
-        if ($product) {
+        try{
 
-            $product->delete();
+            $this->repository->delete($id);
 
-            return $this->response->noContent();
+        }catch (ModelNotFoundException $exception){
 
+            return $this->failureResponse('Product Not Found',Response::HTTP_NOT_FOUND);
         }
-
-        return $this->response->errorBadRequest();
     }
 }
