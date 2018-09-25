@@ -71,7 +71,7 @@ class ProductsTest extends TestCase
         $product = [
             'name' => $this->faker->text(10),
             'description' => $this->faker->text(20),
-            'price' => $this->faker->randomFloat(2,0,4),
+            'price' => "1.50",
             'quantity' => $this->faker->randomNumber(3)
         ];
 
@@ -90,7 +90,7 @@ class ProductsTest extends TestCase
         $product = [
             'name' => $this->faker->text(10),
             'description' => $this->faker->text(20),
-            'price' => $this->faker->randomFloat(2,0,4),
+            'price' => "1.50",
             'quantity' => $this->faker->randomNumber(3)
         ];
 
@@ -110,9 +110,9 @@ class ProductsTest extends TestCase
         $user = factory(User::class)->create();
 
         $product = [
-            'name' => $this->faker->text(10),
+            'name' => $this->faker->text(20),
             'description' => $this->faker->text(20),
-            'price' => $this->faker->randomFloat(2,0,4),
+            'price' => "1.50",
             'quantity' => $this->faker->randomNumber(3)
         ];
 
@@ -137,9 +137,9 @@ class ProductsTest extends TestCase
         $product = factory(Product::class)->create();
 
         $data = [
-            'name' => $this->faker->text(10),
+            'name' => $this->faker->text(5),
             'description' => $this->faker->text(20),
-            'price' => $this->faker->randomFloat(2,0,4),
+            'price' => "1.50",
             'quantity' => $this->faker->randomNumber(3)
         ];
 
@@ -161,7 +161,7 @@ class ProductsTest extends TestCase
         $data = [
             'name' => $this->faker->text(10),
             'description' => $this->faker->text(20),
-            'price' => $this->faker->randomFloat(2,0,4),
+            'price' => "1.50",
             'quantity' => $this->faker->randomNumber(3)
         ];
 
@@ -183,7 +183,7 @@ class ProductsTest extends TestCase
         $product = Product::create($product = [
             'name' => $this->faker->text(10),
             'description' => $this->faker->text(20),
-            'price' => $this->faker->randomFloat(2,0,4),
+            'price' => "1.50",
             'quantity' => $this->faker->randomNumber(3)
         ]);
 
@@ -202,6 +202,6 @@ class ProductsTest extends TestCase
 
 
         $this->delete('/api/products/100' , [], $this->headers($user))
-            ->assertStatus(Response::HTTP_BAD_REQUEST);
+            ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

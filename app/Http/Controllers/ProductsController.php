@@ -56,7 +56,7 @@ class ProductsController extends BaseController
 
             $product = $this->repository->find($id);
 
-            return $this->respondWithItem($product,'Product Listed');
+            return $this->respondWithItem($product,'Product Listed',Response::HTTP_OK);
 
         }catch (ProductNotFoundException $exception){
 
@@ -140,6 +140,9 @@ class ProductsController extends BaseController
         try{
 
             $this->repository->delete($id);
+
+            return $this->successResponse(null,'Product Deleted',Response::HTTP_NO_CONTENT);
+
 
         }catch (ModelNotFoundException $exception){
 

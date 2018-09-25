@@ -96,7 +96,7 @@ class AuthController extends BaseController
 
         if ($validator->fails()) {
 
-            return $this->errorBadRequest($validator);
+            return $this->respondWithErrors($validator);
 
         }
 
@@ -236,10 +236,10 @@ class AuthController extends BaseController
      *
      * @return JsonResponse
      */
-    protected function onRegistered($token,User $user)
+    protected function onRegistered($token,$user)
     {
         $data = [
-                'user' => $user,
+                'user' => $user['data'],
                 'token' => $token,
                 'expired_at' => Carbon::now()->addMinutes(config('jwt.ttl'))->toDateTimeString(),
                 'refresh_expired_at' => Carbon::now()->addMinutes(config('jwt.refresh_ttl'))->toDateTimeString(),
