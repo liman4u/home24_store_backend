@@ -4,18 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Http\Traits\ResponseTrait;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use App\Transformers\UsersTransformer;
+use App\Validators\AuthValidator;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Mockery\Exception;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Response;
+use Prettus\Validator\Contracts\ValidatorInterface;
 
 class AuthController extends BaseController
 {
     use ResponseTrait;
+
+    /**
+     * @var UserRepository
+     */
+    protected $repository;
+
+    /**
+     * AuthController constructor.
+     * @param UserRepository $repository
+     */
+    public function __construct(UserRepository $repository){
+        $this->repository = $repository;
+    }
 
     /**
      *  API Login, on success return JWT Auth token
@@ -24,16 +39,15 @@ class AuthController extends BaseController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function authenticate(Request $request)
+    public function authenticate(AuthValidator $validator,Request $request)
     {
 
-        $validator = \Validator::make($request->input(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        $validator = \Validator::make($request->input(), $validator->getRules(ValidatorInterface::RULE_UPDATE));
 
         if ($validator->fails()) {
-            return $this->errorBadRequest($validator);
+
+            return $this->respondWithErrors($validator);
+
         }
 
         try {
@@ -73,19 +87,17 @@ class AuthController extends BaseController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register(Request $request)
+    public function register(AuthValidator $validator, Request $request)
     {
         // \Log::info(json_encode($request->all()));
         // \Log::info($request);
 
-        $validator = \Validator::make($request->input(), [
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed',
-        ]);
+        $validator = \Validator::make($request->input(), $validator->getRules(ValidatorInterface::RULE_CREATE));
 
         if ($validator->fails()) {
+
             return $this->errorBadRequest($validator);
+
         }
 
         $password = $request->get('password');
@@ -96,7 +108,7 @@ class AuthController extends BaseController
             'password' => bcrypt($password)
         ];
 
-        $user = User::create($attributes);
+        $user = $this->repository->store($attributes);
 
 
         try {
