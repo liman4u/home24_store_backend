@@ -77,7 +77,7 @@ The API  conformed to REST practices and  provide the following functionality:
     post   /api/v1/products                              create a product
     get   /api/v1/products                               get products
     get   /api/v1/products?limit=5                       get products with pagination
-    get   /api/v1/products?search=test&filter=id;name    get products with searches and filters
+    get   /api/v1/products?search=test&filter=id;name    get products with searches and filters [You can also use sortedBy[asc or desc] and orderBy]
     get    /api/v1/products/1                            get product
     put  /api/v1/products/1                              update  a product
     delete /api/v1/products/1                            delete a product
@@ -85,7 +85,7 @@ The API  conformed to REST practices and  provide the following functionality:
 
  **Endpoints**
 
-- The postman documentation link is at https://documenter.getpostman.com/view/3189851/RWaLvSng
+- The postman documentation link is at https://documenter.getpostman.com/view/3189851/RWaRM4rp
 
 - This application conform to the specified endpoint structure given and return the HTTP status codes appropriate to each operation.  
 
