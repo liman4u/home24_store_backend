@@ -30,7 +30,68 @@ class ProductsTest extends TestCase
             ->assertJsonStructure([
                 'data' => [
                     '*' => [
-                        'name','description', 'price', 'quantity'
+                       'id', 'name','description', 'price', 'quantity'
+                    ]
+                ]
+            ]);
+    }
+
+    /**
+     * @test
+     *
+     * Test: GET /api/v1/products.
+     */
+    public function testCanFetchProductsWithPagination()
+    {
+        $this->seed('ProductsTableSeeder');
+
+        $this->get('/api/v1/products?limit=3')
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonCount(3,'data')
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => [
+                        'id', 'name','description', 'price', 'quantity'
+                    ]
+                ]
+            ]);
+    }
+
+    /**
+     * @test
+     *
+     * Test: GET /api/v1/products.
+     */
+    public function testCanFetchProductsWithFilters()
+    {
+        $this->seed('ProductsTableSeeder');
+
+        $this->get('/api/v1/products?filter=id;name')
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => [
+                        'id', 'name'
+                    ]
+                ]
+            ]);
+    }
+
+    /**
+     * @test
+     *
+     * Test: GET /api/v1/products.
+     */
+    public function testCanFetchProductsWithSearch()
+    {
+        $product = factory(Product::class)->create();
+
+        $this->get('/api/v1/products?search='.$product->name)
+            ->assertStatus(Response::HTTP_OK)
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => [
+                        'id', 'name','description', 'price', 'quantity'
                     ]
                 ]
             ]);
@@ -50,9 +111,23 @@ class ProductsTest extends TestCase
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
-                    'name','description', 'price', 'quantity'
+                   'id', 'name','description', 'price', 'quantity'
                 ]
             ]);
+    }
+
+
+    /**
+     * @test
+     *
+     * Test: GET /api/v1/product/1.
+     */
+    public function testCanNotFetchOneProductWithInvalidId()
+    {
+        $this->seed('ProductsTableSeeder');
+
+        $this->get('/api/v1/product/100')
+            ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 
 

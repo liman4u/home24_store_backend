@@ -51,6 +51,8 @@ class ProductsController extends BaseController
             $products = $this->repository->paginate($request->input('limit'));
         }
 
+        if(!is_array($products)) $products = $products->toArray();
+
         return $this->respondWithArray($products,'Products Listed');
 
     }
