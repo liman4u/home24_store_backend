@@ -19,13 +19,13 @@ class ProductsTest extends TestCase
     /**
      * @test
      *
-     * Test: GET /api/products.
+     * Test: GET /api/v1/products.
      */
     public function testCanFetchProducts()
     {
         $this->seed('ProductsTableSeeder');
 
-        $this->get('/api/products')
+        $this->get('/api/v1/products')
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
@@ -40,13 +40,13 @@ class ProductsTest extends TestCase
     /**
      * @test
      *
-     * Test: GET /api/product/1.
+     * Test: GET /api/v1/product/1.
      */
     public function testCanFetchOneProduct()
     {
         $this->seed('ProductsTableSeeder');
 
-        $this->get('/api/product/1')
+        $this->get('/api/v1/product/1')
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
                 'data' => [
@@ -61,7 +61,7 @@ class ProductsTest extends TestCase
     /**
      * @test
      *
-     * Test: POST /api/products.
+     * Test: POST /api/v1/products.
      */
     public function testCanCreateProduct()
     {
@@ -75,14 +75,14 @@ class ProductsTest extends TestCase
             'quantity' => $this->faker->randomNumber(3)
         ];
 
-        $this->post('/api/products', $product, $this->headers($user))
+        $this->post('/api/v1/products', $product, $this->headers($user))
             ->assertStatus(Response::HTTP_CREATED);
     }
 
     /**
      * @test
      *
-     * Test: POST /api/products.
+     * Test: POST /api/v1/products.
      */
     public function testCanNotCreateProductWithoutToken()
     {
@@ -94,7 +94,7 @@ class ProductsTest extends TestCase
             'quantity' => $this->faker->randomNumber(3)
         ];
 
-        $this->post('/api/products', $product)
+        $this->post('/api/v1/products', $product)
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
@@ -102,7 +102,7 @@ class ProductsTest extends TestCase
     /**
      * @test
      *
-     * Test: POST /api/products.
+     * Test: POST /api/v1/products.
      */
     public function testCanNotCreateProductWithDuplicateName()
     {
@@ -116,10 +116,10 @@ class ProductsTest extends TestCase
             'quantity' => $this->faker->randomNumber(3)
         ];
 
-        $this->post('/api/products', $product, $this->headers($user))
+        $this->post('/api/v1/products', $product, $this->headers($user))
             ->assertStatus(Response::HTTP_CREATED);
 
-        $this->post('/api/products', $product, $this->headers($user))
+        $this->post('/api/v1/products', $product, $this->headers($user))
             ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
@@ -127,7 +127,7 @@ class ProductsTest extends TestCase
     /**
      * @test
      *
-     * Test: POST /api/products.
+     * Test: POST /api/v1/products.
      */
     public function testCanUpdateProduct()
     {
@@ -143,7 +143,7 @@ class ProductsTest extends TestCase
             'quantity' => $this->faker->randomNumber(3)
         ];
 
-        $this->put('/api/products/'.$product->id, $data, $this->headers($user))
+        $this->put('/api/v1/products/'.$product->id, $data, $this->headers($user))
             ->assertStatus(Response::HTTP_OK);
 
     }
@@ -151,7 +151,7 @@ class ProductsTest extends TestCase
     /**
      * @test
      *
-     * Test: POST /api/products.
+     * Test: POST /api/v1/products.
      */
     public function testCanNotUpdateProductWithoutToken()
     {
@@ -165,7 +165,7 @@ class ProductsTest extends TestCase
             'quantity' => $this->faker->randomNumber(3)
         ];
 
-        $this->put('/api/products/'.$product->id, $data)
+        $this->put('/api/v1/products/'.$product->id, $data)
             ->assertStatus(Response::HTTP_UNAUTHORIZED);
 
     }
@@ -174,7 +174,7 @@ class ProductsTest extends TestCase
     /**
      * @test
      *
-     * Test: DELETE /api/products/$id.
+     * Test: DELETE /api/v1/products/$id.
      */
     public function testCanDeleteProduct()
     {
@@ -187,21 +187,21 @@ class ProductsTest extends TestCase
             'quantity' => $this->faker->randomNumber(3)
         ]);
 
-        $this->delete('/api/products/' . $product->id, [], $this->headers($user))
+        $this->delete('/api/v1/products/' . $product->id, [], $this->headers($user))
             ->assertStatus(Response::HTTP_NO_CONTENT);
     }
 
     /**
      * @test
      *
-     * Test: DELETE /api/products/$id.
+     * Test: DELETE /api/v1/products/$id.
      */
     public function testCanNotDeleteProductWithInvalidId()
     {
         $user = factory(User::class)->create();
 
 
-        $this->delete('/api/products/100' , [], $this->headers($user))
+        $this->delete('/api/v1/products/100' , [], $this->headers($user))
             ->assertStatus(Response::HTTP_NOT_FOUND);
     }
 }

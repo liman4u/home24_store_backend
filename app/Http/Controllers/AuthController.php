@@ -168,7 +168,12 @@ class AuthController extends BaseController
 
         try {
 
-            if (!$user = JWTAuth::parseToken()->authenticate()) {
+            // get token from header
+            $token = JWTAuth::getToken();
+
+
+
+            if (!$user = JWTAuth::authenticate($token)) {
 
                 return $this->failureResponse('User Not Found',Response::HTTP_NOT_FOUND);
 
@@ -188,9 +193,12 @@ class AuthController extends BaseController
 
         }
 
-        // the token is valid and we have found the user via the sub claim
 
-        return $this->response->item($this->user, new UsersTransformer());
+        $response['data'] = $this->repository->find($user->id);
+
+        // the token is valid and we have found the user via the sub claim
+        return $this->respondWithItem($response,'User Account Retrieved',Response::HTTP_OK);
+
     }
 
 

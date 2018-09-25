@@ -41,7 +41,16 @@ class ProductsController extends BaseController
      */
     public function index(Request $request)
     {
-        return $this->respondWithArray($this->repository->paginate($request->input('limit')),'Products Listed');
+
+        if(!is_null($request->input('filter'))){ // skip presenter if filters is in query
+
+            $products = $this->repository->skipPresenter(true)->paginate($request->input('limit'));
+
+        }else{
+            $products = $this->repository->paginate($request->input('limit'));
+        }
+
+        return $this->respondWithArray($products->toArray(),'Products Listed');
 
     }
 
