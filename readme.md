@@ -29,8 +29,10 @@
 
 - L5 Repository - used to abstract the data layer, making our application more flexible to maintain 
 
+- Tymon JWT Auth - used for jwt token generation and authentication
+
  **How to run**
-- Clone for Github and Copy Environment Variables
+- Clone from Github 
 ```bash
 git clone git@github.com:liman4u/home24_store_backend.git
 
@@ -38,7 +40,7 @@ cd home24_store_backend
 
 ```
 
-- Docker should be installed before running the next command
+- Docker should be installed before running the start command
 
 - To start the application server and run tests using docker, run the following from root of application:
 ```bash
@@ -51,7 +53,7 @@ sh ./start.sh
 chmod 400 start.sh
 ```
 
-- To run project without docker , follow these steps(Assumed composer is already installed);
+- To run project without docker , follow these steps(Assuming composer is already installed);
 ```bash
 composer install
 cp .env.example .env  [Change database connections in .env]
@@ -68,19 +70,19 @@ The API  conformed to REST practices and  provide the following functionality:
 ```
     entities： user, product
     
-    post   /api/v1/token                                 create token
-    post   /api/v1/register                              register a new user
-    get   /api/v1/account                                get user account
-    get    /api/v1/refresh                               refresh token
-    delete /api/v1/logout                                logout
+    post   /api/v1/token                                  create token
+    post   /api/v1/register                               register a new user
+    get    /api/v1/account                                get user account
+    get    /api/v1/refresh                                refresh token
+    delete /api/v1/logout                                 logout
     
-    post   /api/v1/products                              create a product
-    get   /api/v1/products                               get products
-    get   /api/v1/products?limit=5                       get products with pagination
-    get   /api/v1/products?search=test&filter=id;name    get products with searches and filters [You can also use sortedBy[asc or desc] and orderBy]
-    get    /api/v1/products/1                            get product
-    put  /api/v1/products/1                              update  a product
-    delete /api/v1/products/1                            delete a product
+    post   /api/v1/products                               create a product
+    get    /api/v1/products                               get products
+    get    /api/v1/products?limit=5                       get products with pagination
+    get    /api/v1/products?search=test&filter=id;name    get products with searches and filters [You can also use sortedBy[asc or desc] and orderBy]
+    get    /api/v1/products/1                             get product
+    put    /api/v1/products/1                             update  a product
+    delete /api/v1/products/1                             delete a product
 ```
 
  **Endpoints**
