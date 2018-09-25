@@ -209,7 +209,6 @@ class ProductsTest extends TestCase
 
         $user = factory(User::class)->create();
 
-        $product = factory(Product::class)->create();
 
         $data = [
             'name' => $this->faker->text(5),
@@ -218,7 +217,7 @@ class ProductsTest extends TestCase
             'quantity' => $this->faker->randomNumber(3)
         ];
 
-        $this->put('/api/v1/products/'.$product->id, $data, $this->headers($user))
+        $this->put('/api/v1/products/100', $data, $this->headers($user))
             ->assertStatus(Response::HTTP_OK);
 
     }

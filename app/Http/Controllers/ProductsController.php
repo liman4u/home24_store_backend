@@ -127,6 +127,41 @@ class ProductsController extends BaseController
 
         try{
 
+
+            $product = $this->repository->updateOrCreate($request->all(),$request->query());
+
+
+            return $this->respondWithItem($product,'Product Updated',Response::HTTP_OK);
+
+        }catch (ModelNotFoundException $exception){
+
+            return $this->failureResponse('Product Not Found',Response::HTTP_NOT_FOUND);
+        }
+
+
+    }
+
+    /**
+     * Update a product
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Dingo\Api\Http\Response|void
+     */
+    public function patch($id,ProductValidator $validator,Request $request)
+    {
+
+        $validator = \Validator::make($request->input(), $validator->getRules( ValidatorInterface::RULE_UPDATE));
+
+        if ($validator->fails()) {
+
+
+            return $this->respondWithErrors($validator);
+
+        }
+
+        try{
+
+
             $product = $this->repository->update($request->all(),$id);
 
 
