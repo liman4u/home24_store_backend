@@ -81,7 +81,8 @@ The API  conformed to REST practices and  provide the following functionality:
     get    /api/v1/products?limit=5                       get products with pagination
     get    /api/v1/products?search=test&filter=id;name    get products with searches and filters [You can also use sortedBy[asc or desc] and orderBy]
     get    /api/v1/products/1                             get product
-    put    /api/v1/products/1                             update  a product
+    put    /api/v1/products/1                             replace  a product
+    patch    /api/v1/products/1                           update part of a product
     delete /api/v1/products/1                             delete a product
 ```
 

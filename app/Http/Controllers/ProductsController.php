@@ -9,6 +9,7 @@ use App\Validators\ProductValidator;
 use Dingo\Api\Http\Response;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Prettus\Validator\Contracts\ValidatorInterface;
 
 /**
  * Class ProductsController
@@ -93,7 +94,7 @@ class ProductsController extends BaseController
     public function store(ProductValidator $validator,Request $request)
     {
 
-        $validator = \Validator::make($request->input(), $validator->getRules());
+        $validator = \Validator::make($request->input(), $validator->getRules( ValidatorInterface::RULE_CREATE));
 
         if ($validator->fails()) {
 
@@ -107,7 +108,7 @@ class ProductsController extends BaseController
     }
 
     /**
-     * Update a product
+     * Change a product
      *
      * @param \Illuminate\Http\Request $request
      * @return \Dingo\Api\Http\Response|void
@@ -115,7 +116,7 @@ class ProductsController extends BaseController
     public function update($id,ProductValidator $validator,Request $request)
     {
 
-        $validator = \Validator::make($request->input(), $validator->getRules());
+        $validator = \Validator::make($request->input(), $validator->getRules( ValidatorInterface::RULE_UPDATE));
 
         if ($validator->fails()) {
 
@@ -138,6 +139,8 @@ class ProductsController extends BaseController
 
 
     }
+
+
 
     /**
      * Remove the specified product.

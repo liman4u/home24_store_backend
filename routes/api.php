@@ -40,6 +40,8 @@ $api->version('v1',[
 
         $api->put('products/{id}', 'ProductsController@update');
 
+        $api->patch('products/{id}', 'ProductsController@update');
+
         $api->delete('products/{id}', 'ProductsController@destroy');
 
     });

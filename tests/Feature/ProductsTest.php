@@ -223,6 +223,28 @@ class ProductsTest extends TestCase
 
     }
 
+
+    /**
+     * @test
+     *
+     * Test: POST /api/v1/products.
+     */
+    public function testCanUpdatePartOfProduct()
+    {
+
+        $user = factory(User::class)->create();
+
+        $product = factory(Product::class)->create();
+
+        $data = [
+            'name' => $this->faker->text(5)
+        ];
+
+        $this->patch('/api/v1/products/'.$product->id, $data, $this->headers($user))
+            ->assertStatus(Response::HTTP_OK);
+
+    }
+
     /**
      * @test
      *
