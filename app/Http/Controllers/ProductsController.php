@@ -47,10 +47,11 @@ class ProductsController extends BaseController
             $products = $this->repository->skipPresenter(true)->paginate($request->input('limit'));
 
         }else{
+
             $products = $this->repository->paginate($request->input('limit'));
         }
 
-        return $this->respondWithArray($products->toArray(),'Products Listed');
+        return $this->respondWithArray($products,'Products Listed');
 
     }
 

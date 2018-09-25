@@ -183,8 +183,6 @@ return [
         //JWT
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
 
-        //Api Doc
-        Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class,
 
         //COR
         Barryvdh\Cors\ServiceProvider::class,
