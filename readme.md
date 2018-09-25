@@ -21,7 +21,7 @@
 
 - This can be found in the composer.json in the root directory of the project
 
-- PhpUnit 7.0 was used for testing , am more familiar with this than others like Codeception and Behat
+- PhpUnit 6.0 was used for testing , am more familiar with this than others like Codeception and Behat
 
 - Dingo API - provides flexibility in api development with api versioning, content negotiation, rate limiting and exception handling
 
