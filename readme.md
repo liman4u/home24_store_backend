@@ -15,7 +15,7 @@
 
 - Testing was done with PhpUnit 6.5.13
 
-- Used TDD (Test-Driven Design) approach
+- Used TDD (Test-Driven Development) approach
 
  **Main Packages**
 
